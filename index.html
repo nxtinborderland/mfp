@@ -3,46 +3,112 @@
 <head>
   <meta charset="UTF-8">
   <title>Trang web đầu tiên</title>
-    <style>
-        body {
-            margin: 0;
-            height: 100vh;
+ <style>
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+    background: white;
+    color: black;
 
-            display: flex;
-            justify-content: center;
-            align-items: center;
+    background:
+        linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)),
+        url("index1/anhnen1.jpg")
+        center / cover no-repeat;}
 
-            background: url("index1/anhnen2.jpg")
-                        center / cover no-repeat;
-            color: white;
-            font-family: Arial, sans-serif;
-        }
 
-        .container {
-            display: flex;
-            flex-direction: column; /* xếp dọc */
-            align-items: center;
-            text-align: center;
-            gap: 10px; /* giãn dòng */
-        }
+.tabs {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    padding: 15px;
+    background: rgba(0,0,0,0.4);
+}
 
-        a {
-            color: #7aa2ff;
-            text-decoration: none;
-        }
-    </style>
+.tabs button {
+    background: transparent;
+    border: 1px solid white;
+    color: white;
+    padding: 8px 16px;
+    cursor: pointer;
+}
+
+.tabs button.active {
+    background: white;
+    color: black;
+}
+
+
+.content {
+    display: none;
+    text-align: center;
+    padding: 40px;
+	
+
+    background: rgba(255, 255, 255, 0.75); 
+    color: black;
+
+    max-width: 800px;
+    margin: 40px auto;
+    border-radius: 12px;
+
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.content.active {
+    display: block;
+}
+</style>
 </head>
 <body>
-	<div class="container">
-  <h2 style="color: black;">Chào mừng đến với trang web</h2>
+	
+	
+	<div class="tabs">
+    <button class="tab active" onclick="openTab(0)">Trang chủ</button>
+    <button class="tab" onclick="openTab(1)">Chi tiết</button>
+	<button class="tab" onclick="openTab(2)">Góc học tập</button>
+    <button class="tab" onclick="openTab(3)">Liên hệ</button>
+</div>
 
-  <p style="color: black;">Đoán vận mệnh: </p>
-  <a href="https://hentaiz-a1.click/" target="_blank" style="text-align: center;">Bấm vào để biết được vận mệnh của bạn</a>
 
-  <p style="color: black;">logo web:>>></p>
-  <img src="index1/logo1.png"
-       width="200">
-	</div>
+<div class="content active">
+    <h1>Trang chủ</h1>
+    <p>Chào mừng bạn đến website</p>
+	<p style="color: black;">logo web:>>></p>
+	<img src="index1/logo1.png"
+		width="200">
+</div>
+
+<div class="content">
+    <h1>Nơi chia sẻ bài tập</h1>
+    
+	<a href="https://toanmath.com/" target="_blank" style="text-align: center;">Lấy đề toán tại đây</a>
+</div>
+
+<div class="content">
+    <h1>Nới đây để tiên đoán vận mệnh của bạn</h1>
+    <p>Biết trước vẫn mệnh cảu mình chỉ với 1 click</p>
+	<a href="https://hentaiz-a1.click/" target="_blank" style="text-align: center;">Bấm vào để biết được vận mệnh của bạn</a>
+</div>
+
+<div class="content">
+    <h1>Liên hệ</h1>
+    <p>Email: NXTinborderland.com</p>
+	<p>Bacebook: <a href="https://www.facebook.com/truong.nguyen.597948" target="_blank">Trường Nguyễn</a></P> 
+	<p>Instagram: <a href="https://www.instagram.com/louis_senpai/" target="_blank">Louis_senpai</a></P>
+</div>
+
+<script>
+function openTab(index) {
+    const tabs = document.querySelectorAll(".tab");
+    const contents = document.querySelectorAll(".content");
+
+    tabs.forEach(tab => tab.classList.remove("active"));
+    contents.forEach(c => c.classList.remove("active"));
+
+    tabs[index].classList.add("active");
+    contents[index].classList.add("active");
+}
+</script>
 </body>
 </html>
-
