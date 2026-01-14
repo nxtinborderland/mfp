@@ -2,8 +2,7 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Góc học tập</title>
-  <link rel="icon" type="image/png" href="favicon.png">
+  <title>Trang web đầu tiên</title>
  <style>
 body {
     margin: 0;
@@ -59,6 +58,28 @@ body {
 .content.active {
     display: block;
 }
+
+#game {
+    background: #fff;
+    border-radius: 10px;
+}
+
+#score, #highscore {
+    margin-top: 8px;
+    font-weight: bold;
+    color: black;
+}
+
+#restartBtn {
+    margin-top: 15px;
+    padding: 8px 18px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 20px;
+    border: none;
+    background: black;
+    color: white;
+}
 </style>
 </head>
 <body>
@@ -69,6 +90,7 @@ body {
     <button class="tab" onclick="openTab(1)">Góc thăng hoa</button>
 	<button class="tab" onclick="openTab(2)">Góc học tập</button>
     <button class="tab" onclick="openTab(3)">Liên hệ</button>
+	<button class="tab" onclick="openTab(4)">Game</button>
 </div>
 
 
@@ -99,19 +121,170 @@ body {
 	<p>Instagram: <a href="https://www.instagram.com/louis_senpai/" target="_blank">Louis_senpai</a></P>
 </div>
 
+<div class="content">
+    <h1>Mini game</h1>
+    <p>Space / chạm để nhảy</p>
+
+    <canvas id="game" width="600" height="200"></canvas>
+
+    <div id="score">Score: 0</div>
+    <div id="highscore">High: 0</div>
+
+    <button id="restartBtn" onclick="restartGame()" style="display:none;">
+        Chơi lại (Space)
+    </button>
+</div>
+
+
+
 <script>
+let canvas, ctx, animationId;
+let running = false;
+let gameOver = false;
+
+let dino, obstacles = [];
+let gravity = 0.6;
+let jumpPower = -11;
+let speed = 4;
+let maxSpeed = 10;
+let score = 0;
+let highScore = localStorage.getItem("highScore") || 0;
+
+const dinoImg = new Image();
+dinoImg.src = "game/dino.png";
+
+const cactusImg = new Image();
+cactusImg.src = "game/cactus.png";
+
+function initGame() {
+    canvas = document.getElementById("game");
+    ctx = canvas.getContext("2d");
+
+    dino = {
+        x: 50,
+        y: 140,
+        w: 40,
+        h: 40,
+        vy: 0,
+        jumping: false
+    };
+
+    obstacles = [];
+    speed = 4;
+    score = 0;
+    running = true;
+    gameOver = false;
+
+    cancelAnimationFrame(animationId);
+
+    document.getElementById("restartBtn").style.display = "none";
+    spawnObstacle();
+}
+
+function spawnObstacle() {
+    obstacles.push({
+        x: canvas.width + Math.random() * 200,
+        y: 150,
+        w: 30,
+        h: 40
+    });
+}
+
+function update() {
+    if (!running) return;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Dino physics
+    dino.vy += gravity;
+    dino.y += dino.vy;
+
+    if (dino.y >= 140) {
+        dino.y = 140;
+        dino.vy = 0;
+        dino.jumping = false;
+    }
+
+    if (dinoImg.complete)
+        ctx.drawImage(dinoImg, dino.x, dino.y, dino.w, dino.h);
+
+    // Obstacles
+    for (let o of obstacles) {
+        o.x -= speed;
+        if (cactusImg.complete)
+            ctx.drawImage(cactusImg, o.x, o.y, o.w, o.h);
+
+        if (
+            dino.x < o.x + o.w &&
+            dino.x + dino.w > o.x &&
+            dino.y < o.y + o.h &&
+            dino.y + dino.h > o.y
+        ) {
+            running = false;
+            gameOver = true;
+            highScore = Math.max(highScore, score);
+            localStorage.setItem("highScore", highScore);
+            document.getElementById("restartBtn").style.display = "inline-block";
+            return;
+        }
+    }
+
+    // Safe remove obstacle
+    if (obstacles.length && obstacles[0].x < -50) {
+        obstacles.shift();
+        spawnObstacle();
+        score++;
+        if (speed < maxSpeed) speed += 0.15;
+    }
+
+    document.getElementById("score").innerText = "Score: " + score;
+    document.getElementById("highscore").innerText = "High: " + highScore;
+
+    animationId = requestAnimationFrame(update);
+}
+
+function jump() {
+    if (!dino.jumping && running) {
+        dino.vy = jumpPower;
+        dino.jumping = true;
+    }
+}
+
+function restartGame() {
+    initGame();
+    update();
+}
+
+document.addEventListener("keydown", e => {
+    if (e.code === "Space") {
+        e.preventDefault();
+        gameOver ? restartGame() : jump();
+    }
+});
+
+document.addEventListener("touchstart", () => {
+    gameOver ? restartGame() : jump();
+});
+
 function openTab(index) {
     const tabs = document.querySelectorAll(".tab");
     const contents = document.querySelectorAll(".content");
 
-    tabs.forEach(tab => tab.classList.remove("active"));
+    tabs.forEach(t => t.classList.remove("active"));
     contents.forEach(c => c.classList.remove("active"));
 
     tabs[index].classList.add("active");
     contents[index].classList.add("active");
+
+    if (index === 4) {
+        initGame();
+        update();
+    } else {
+        running = false;
+        cancelAnimationFrame(animationId);
+    }
 }
 </script>
+
 </body>
 </html>
-
-
